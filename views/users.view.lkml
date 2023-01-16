@@ -59,6 +59,12 @@ view: users {
     sql: ${TABLE}.last_name ;;
   }
 
+  dimension: full_name {
+    type: string
+    sql: CONCAT(${first_name}, ' ', ${last_name}) ;;
+    html: <b><font color="red"><center>{{value}}</center></font></b> ;;
+  }
+
   dimension: latitude {
     type: number
     sql: ${TABLE}.latitude ;;

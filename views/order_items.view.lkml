@@ -68,6 +68,12 @@ view: order_items {
     sql: ${TABLE}.returned_at ;;
   }
 
+  dimension: date_example {
+    type: date
+    sql: ${TABLE}.returned_at ;;
+    html: {{rendered_value | date: "%B %e, %Y"}} ;;
+  }
+
   dimension: sale_price {
     type: number
     sql: ${TABLE}.sale_price ;;

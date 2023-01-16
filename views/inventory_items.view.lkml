@@ -87,4 +87,38 @@ view: inventory_items {
     type: count
     drill_fields: [id, product_name, products.name, products.id, order_items.count]
   }
+
+  measure: count_products {
+    type: count
+    drill_fields: [id, products.id]
+  }
+
+  measure: total_cost {
+    type: sum
+    sql: ${cost} ;;
+  }
+
+  measure: sum_retail {
+    type: sum
+    sql: ${product_retail_price} ;;
+  }
+
+  measure: total_revenue {
+    type: number
+    sql: ${count}*${sum_retail};;
+  }
+
+  measure: total_revenue_example {
+    type: number
+    sql: ${count}*${sum_retail};;
+    value_format_name: usd
+    html: {{rendered_value | replace:',',' ' | replace: '.',','}} ;;
+  }
+
+  measure: total_profit_example {
+    type: number
+    sql: ${total_cost}-${total_revenue} ;;
+    value_format_name: usd
+    html: <font color="green">{{rendered_value}}</font> ;;
+  }
 }
