@@ -10,7 +10,25 @@ datagroup: zeljana_training_project_default_datagroup {
 
 persist_with: zeljana_training_project_default_datagroup
 
-explore: users {}
+explore: users {
+  view_name: users
+
+  join: order_items {
+    type: left_outer
+    sql_on: ${order_items.user_id} = ${users.id} ;;
+    relationship: one_to_many
+  }
+
+  join: products {
+    type: left_outer
+    sql_on: ${order_items.user_id} = ${users.id} ;;
+    relationship: one_to_many
+  }
+}
+
+explore: users_extended {
+  extends: [users]
+}
 
 explore: distribution_centers {}
 
@@ -46,6 +64,10 @@ explore: order_items {
     sql_on: ${products.distribution_center_id} = ${distribution_centers.id} ;;
     relationship: many_to_one
   }
+
+  #sql_always_having: ${sale_price} > 200 ;;
+  #sql_always_where: (${returned_date} IS NOT NULL) and (${sale_price} > 200) ;;
+
 }
 
 explore: events {

@@ -19,6 +19,35 @@ view: products {
     sql: ${TABLE}.category ;;
   }
 
+  dimension: category_with_dashboard {
+    type: string
+    sql: ${TABLE}.category ;;
+    html: <a href="/dashboards/56">{{value}}</a> ;;
+  }
+
+  dimension: category_example {
+    type: string
+    sql: ${TABLE}.category ;;
+    html: <a href="https://www.google.com/">{{value}}</a> ;;
+  }
+
+  dimension: category_example_dynamic {
+    type: string
+    sql: ${TABLE}.category ;;
+    html: <a href="https://www.google.com/search?q={{value}}">{{value}}</a> ;;
+  }
+
+  dimension: category_with_link {
+    type: string
+    sql: ${TABLE}.category ;;
+    link: {
+      label: "Google Search"
+      url: "https://www.google.com/search?q={{value}}"
+      icon_url: "https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_L
+ogo.svg"
+    }
+  }
+
   dimension: cost {
     type: number
     sql: ${TABLE}.cost ;;
