@@ -117,8 +117,32 @@ view: inventory_items {
 
   measure: total_profit_example {
     type: number
-    sql: ${total_cost}-${total_revenue} ;;
+    sql: ${total_revenue}-${total_cost} ;;
     value_format_name: usd
     html: <font color="green">{{rendered_value}}</font> ;;
+  }
+
+  measure: total_profit_condition {
+    type: number
+    sql: ${total_revenue}-${inventory_items.total_cost}  ;;
+    value_format_name: usd
+    html: {%if value >=75000 %}<font color="green">{{rendered_value}}</font>
+          {%elsif value < 75000 and value >= 50000%}<font color="gold">{{rendered_value}}</font>
+          {%else%}<font color="red">{{rendered_value}}</font>{%endif%};;
+  }
+
+  measure: count_test {
+    type: count
+    drill_fields: [products.category, total_profit_example]
+    html: <a href="{{link}}&f[order_items.total_profit]=>50000">{{rendered_value}}</a> ;;
+  }
+
+  measure: count_test_link {
+    type: count
+    drill_fields: [products.category, total_profit_example]
+    link: {
+      label: "Filtered Drill Model"
+      url: "{{link}}&f[total_profit_example]=>=50000"
+    }
   }
 }

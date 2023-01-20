@@ -14,6 +14,13 @@ view: products {
     sql: ${TABLE}.brand ;;
   }
 
+  dimension: brand_filter {
+    type: string
+    sql: ${TABLE}.brand;;
+    html: <a href="/explore/leticia_model_exercise/order_items?fields=products.brand,orders.count,order_items.total_revenue,
+    order_items.total_profit,users.count&f[products.brand]={{filterable_value}}">{{value}}</a>;;
+  }
+
   dimension: category {
     type: string
     sql: ${TABLE}.category ;;
@@ -82,6 +89,15 @@ ogo.svg"
   measure: count {
     type: count
     drill_fields: [detail*]
+  }
+
+  measure: total_profit_condition {
+    type: number
+    sql: ${retail_price}  ;;
+    value_format_name: usd
+    html: {%if value >=100%}<font color="green">{{rendered_value}}</font>
+          {%elsif value < 1000 and value >= 50%}<font color="gold">{{rendered_value}}</font>
+          {%else%}<font color="red">{{rendered_value}}</font>{%endif%};;
   }
 
   # ----- Sets of fields for drilling ------
