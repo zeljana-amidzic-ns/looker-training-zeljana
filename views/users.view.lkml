@@ -99,4 +99,10 @@ view: users {
     type: count
     drill_fields: [id, last_name, first_name, order_items.count, events.count]
   }
+
+  measure: count_female {
+    type: count_distinct
+    sql: ${TABLE}.id ;;
+    filters: [gender: "F"]
+  }
 }
