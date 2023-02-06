@@ -15,14 +15,32 @@ explore: users {
 
   join: order_items {
     type: left_outer
-    sql_on: ${order_items.user_id} = ${users.id} ;;
-    relationship: one_to_many
+    sql_on: ${users.id} = ${order_items.user_id} ;;
+    relationship: many_to_one
   }
 
   join: products {
     type: left_outer
     sql_on: ${order_items.user_id} = ${users.id} ;;
     relationship: one_to_many
+  }
+
+  join: users_latest {
+    type: left_outer
+    sql_on: ${users.id} = ${users_latest.id} ;;
+    relationship: many_to_one
+  }
+
+  join: users_activity {
+    type: left_outer
+    sql_on: ${users.id} = ${users_activity.id} ;;
+    relationship: many_to_one
+  }
+
+  join: users_revenue {
+    type: left_outer
+    sql: ${users.id} = ${users_revenue.id} ;;
+    relationship: many_to_one
   }
 }
 
@@ -65,6 +83,23 @@ explore: order_items {
     relationship: many_to_one
   }
 
+  join: users_latest {
+    type: left_outer
+    sql_on: ${order_items.user_id} = ${users_latest.id} ;;
+    relationship: many_to_one
+  }
+
+  join: users_activity {
+    type: left_outer
+    sql_on: ${order_items.user_id} = ${users_activity.id} ;;
+    relationship: many_to_one
+  }
+
+  join: users_revenue {
+    type: left_outer
+    sql_on: ${order_items.user_id} = ${users_revenue.id} ;;
+    relationship: many_to_one
+  }
   #sql_always_having: ${sale_price} > 200 ;;
   #sql_always_where: (${returned_date} IS NOT NULL) and (${sale_price} > 200) ;;
 
