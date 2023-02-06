@@ -107,23 +107,23 @@ view: order_items {
   dimension: lifetime_orders {
     case: {
       when: {
-        sql: (SELECT COUNT(${order_id}) FROM ${TABLE}) = 1 ;;
+        sql: users_revenue.lifetime = 1 ;;
         label: "1 Order"
       }
       when: {
-        sql: (SELECT COUNT(${order_id}) FROM ${TABLE}) = 2 ;;
+        sql: users_revenue.lifetime = 2 ;;
         label: "2 Orders"
       }
       when: {
-        sql: (SELECT COUNT(${order_id}) FROM ${TABLE}) > 2 AND (SELECT COUNT(${order_id}) FROM ${TABLE}) < 6 ;;
+        sql: users_revenue.lifetime > 2 AND users_revenue.lifetime < 6 ;;
         label: "3-5 Orders"
       }
       when: {
-        sql: (SELECT COUNT(${order_id}) FROM ${TABLE}) > 5 AND (SELECT COUNT(${order_id}) FROM ${TABLE}) < 10 ;;
+        sql: users_revenue.lifetime > 5 AND users_revenue.lifetime < 10 ;;
         label: "6-9 Orders"
       }
       when: {
-        sql: (SELECT COUNT(${order_id}) FROM ${TABLE}) > 10 ;;
+        sql: users_revenue.lifetime > 10 ;;
         label: "10+ Orders"
       }
       else: "0 Orders"
@@ -133,27 +133,27 @@ view: order_items {
   dimension: customer_lifetime_revenue {
     case: {
       when: {
-       sql: (SELECT SUM(${sale_price}) FROM ${TABLE}) >= 0 AND (SELECT SUM(${sale_price}) FROM ${TABLE}) < 5;;
+       sql: users_revenue.revenue >= 0 AND users_revenue.revenue < 5;;
        label: "$0.00 - $4.99"
       }
       when: {
-        sql: (SELECT SUM(${sale_price}) FROM ${TABLE}) >= 5 AND (SELECT SUM(${sale_price}) FROM ${TABLE}) < 20;;
+        sql: users_revenue.revenue >= 5 AND users_revenue.revenue < 20;;
         label: "$5.00 - $19.99"
       }
       when: {
-        sql: (SELECT SUM(${sale_price}) FROM ${TABLE}) >= 20 AND (SELECT SUM(${sale_price}) FROM ${TABLE}) < 50 ;;
+        sql: users_revenue.revenue >= 20 AND users_revenue.revenue < 50 ;;
         label: "$20.00 - $49.99"
       }
       when: {
-        sql: (SELECT SUM(${sale_price}) FROM ${TABLE}) >= 50 AND (SELECT SUM(${sale_price}) FROM ${TABLE}) < 100 ;;
+        sql: users_revenue.revenue >= 50 AND users_revenue.revenue < 100 ;;
         label: "$50.00 - $99.99"
       }
       when: {
-        sql: (SELECT SUM(${sale_price}) FROM ${TABLE}) >= 100 AND (SELECT SUM(${sale_price}) FROM ${TABLE}) < 500 ;;
+        sql: users_revenue.revenue >= 100 AND users_revenue.revenue < 500 ;;
         label: "$100.00 - $499.99"
       }
       when: {
-        sql: (SELECT SUM(${sale_price}) FROM ${TABLE}) >= 500 AND (SELECT SUM(${sale_price}) FROM ${TABLE}) < 1000 ;;
+        sql: users_revenue.revenue >= 500 AND users_revenue.revenue < 1000 ;;
         label: "$500.00 - $999.99"
       }
       else: "$1000.00 +"
@@ -163,11 +163,16 @@ view: order_items {
   dimension: is_active {
     case: {
       when: {
-        sql: (SELECT DATE_DIFF(CURRENT_DATE(),MAX(${TABLE}.created_at), DAY) FROM ${TABLE}) < 90;;
-        label: "Active"
+        sql: users_activity.days_difference > 90;;
+        label: "Inactive"
       }
-      else: "Inactive"
+      else: "Active"
     }
+  }
+
+  measure: date_dif_customer {
+    type: date
+    sql: (SELECT CAST(CURRENT_DATE() AS DATE)) ;;
   }
 
   measure: customer_first_order {
@@ -182,6 +187,16 @@ view: order_items {
     sql: (SELECT MAX(${TABLE}.created_at) FROM ${TABLE}) ;;
     drill_fields: [user_id]
     html: {{rendered_value | date: "%B %e, %Y"}} ;;
+  }
+
+  measure: average_latest_days {
+    type: average
+    sql: ${TABLE}.latest ;;
+  }
+
+  measure: total_revenue {
+    type: sum
+    sql: ${sale_price} ;;
   }
 
   measure: count {
@@ -204,12 +219,6 @@ view: order_items {
   measure: order_count {
     type: count_distinct
     sql: ${order_id} ;;
-  }
-
-  measure: total_revenue {
-    type: sum
-    sql: ${sale_price} ;;
-    value_format_name: usd
   }
 
   measure: total_revenue_from_completed_orders {
